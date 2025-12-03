@@ -15,7 +15,7 @@ public class Game {
 	 * Create all the rooms and link their exits together. 방들을 만들고 방의 출구들을 서로 엮어준다.
 	 */
 	private void createRooms() {
-		Room hall, lectureRoom, computerRoom, office, dongBang;
+		Room hall, lectureRoom, computerRoom, office, dongBang, cellar;
 
 		// create the rooms
 		hall = new Room("Hall");
@@ -23,13 +23,24 @@ public class Game {
 		dongBang = new Room("Dongari room");
 		computerRoom = new Room("Computer room");
 		office = new Room("Office");
+		cellar = new Room("Cellar");
 
 		// initialise room exits
-		hall.setExits(null, lectureRoom, computerRoom, dongBang);
-		lectureRoom.setExits(null, null, null, hall);
-		dongBang.setExits(null, hall, null, null);
-		computerRoom.setExits(hall, office, null, null);
-		office.setExits(null, null, null, computerRoom);
+		hall.setExit("east", lectureRoom);
+		hall.setExit("south", computerRoom);
+		hall.setExit("west", dongBang);
+		
+		lectureRoom.setExit("west", hall);
+		
+		dongBang.setExit("east", hall);
+		
+		computerRoom.setExit("north", hall);
+		computerRoom.setExit("east", office);
+		computerRoom.setExit("down", cellar);
+		
+		office.setExit("west", computerRoom);
+		
+		cellar.setExit("up", computerRoom);
 
 		currentRoom = hall; // 홀에서 게임을 시작한다.
 	}
@@ -52,6 +63,13 @@ public class Game {
 		}
 		System.out.println("Thank you for playing.  Good bye.");
 	}
+	
+	/**
+	 * 출구가 있는 방향을 모두 출력한다.
+	 */
+	private void printLocationInfo() {
+		System.out.print(currentRoom.getExitString());
+	}
 
 	/**
 	 * Print out the opening message for the player.
@@ -67,19 +85,7 @@ public class Game {
 		// 현재 있는 방에 대한 정보 출력
 		System.out.println("Location: " + currentRoom.getDescription());
 		// 출구가 있는 방향을 모두 출력
-		System.out.print("Exits: ");
-		if (currentRoom.northExit != null) {
-			System.out.print("north ");
-		}
-		if (currentRoom.eastExit != null) {
-			System.out.print("east ");
-		}
-		if (currentRoom.southExit != null) {
-			System.out.print("south ");
-		}
-		if (currentRoom.westExit != null) {
-			System.out.print("west ");
-		}
+		printLocationInfo();
 		System.out.println();
 	}
 
@@ -138,19 +144,7 @@ public class Game {
 		String direction = command.getSecondWord();
 
 		// Try to leave current room.
-		Room nextRoom = null;
-		if (direction.equals("north")) {
-			nextRoom = currentRoom.northExit;
-		}
-		if (direction.equals("east")) {
-			nextRoom = currentRoom.eastExit;
-		}
-		if (direction.equals("south")) {
-			nextRoom = currentRoom.southExit;
-		}
-		if (direction.equals("west")) {
-			nextRoom = currentRoom.westExit;
-		}
+		Room nextRoom = currentRoom.getExit(direction);
 
 		if (nextRoom == null) {
 			System.out.println("No exit in that direction!");
@@ -160,19 +154,7 @@ public class Game {
 			// 새 방에 대한 정보 출력
 			System.out.println("Location: " + currentRoom.getDescription());
 			// 출구가 있는 방향을 모두 출력
-			System.out.print("Exits: ");
-			if (currentRoom.northExit != null) {
-				System.out.print("north ");
-			}
-			if (currentRoom.eastExit != null) {
-				System.out.print("east ");
-			}
-			if (currentRoom.southExit != null) {
-				System.out.print("south ");
-			}
-			if (currentRoom.westExit != null) {
-				System.out.print("west ");
-			}
+			printLocationInfo();
 			System.out.println();
 		}
 	}
