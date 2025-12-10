@@ -1,7 +1,9 @@
 package w13;
+import java.util.List;
 public class Game {
 	private Parser parser;
-	private Room currentRoom;
+	private Room hall, lectureRoom, computerRoom, office, dongBang, cellar;
+	private Player player;
 
 	/**
 	 * Create the game and initialise its internal map.
@@ -9,13 +11,13 @@ public class Game {
 	public Game() {
 		createRooms();
 		parser = new Parser();
+		player = new Player(hall, 20);
 	}
 
 	/**
 	 * Create all the rooms and link their exits together. 방들을 만들고 방의 출구들을 서로 엮어준다.
 	 */
 	private void createRooms() {
-		Room hall, lectureRoom, computerRoom, office, dongBang, cellar;
 
 		// create the rooms
 		hall = new Room("Hall");
@@ -24,6 +26,10 @@ public class Game {
 		computerRoom = new Room("Computer room");
 		office = new Room("Office");
 		cellar = new Room("Cellar");
+		
+		computerRoom.addItem(new Item("book", "오래된 마법서", 10));
+		dongBang.addItem(new Item("portion", "체력을 5만큼 올려주는 묘약", 5));
+		dongBang.addItem(new Item("book", "AI tech book", 7));
 
 		// initialise room exits
 		hall.setExit("east", lectureRoom);
@@ -41,8 +47,6 @@ public class Game {
 		office.setExit("west", computerRoom);
 		
 		cellar.setExit("up", computerRoom);
-
-		currentRoom = hall; // 홀에서 게임을 시작한다.
 	}
 
 	/**
@@ -65,10 +69,11 @@ public class Game {
 	}
 	
 	/**
-	 * 출구가 있는 방향을 모두 출력한다.
+	 * 주어진 방에 관한 정보를 출력한다.
+	 * @param room
 	 */
-	private void printLocationInfo() {
-		System.out.print("Location: " + currentRoom.getLongDescription() + "\n");
+	private void printLocationInfo(Room room) {
+		System.out.print("Location: " + room.getLongDescription() + "\n");
 	}
 
 	/**
@@ -81,7 +86,7 @@ public class Game {
 		System.out.println("Type 'help' if you need help.");
 		System.out.println();
 
-		printLocationInfo();
+		printLocationInfo(player.getCurrentRoom());
 	}
 
 	/**
@@ -113,6 +118,8 @@ public class Game {
 			look();
 		} else if (commandWord.equals("eat")) {
 			eat();
+		} else if (commandWord.equals("back")) {
+			back(command);
 		}
 
 		return wantToQuit;
@@ -141,24 +148,30 @@ public class Game {
 
 		String direction = command.getSecondWord();
 
-		// Try to leave current room.
-		Room nextRoom = currentRoom.getExit(direction);
 
-		if (nextRoom == null) {
-			System.out.println("No exit in that direction!");
+		if (player.moveTo(direction) == -1) {
+			System.out.println("그쪽으로는 출구가 없습니다.");
 		} else {
-			currentRoom = nextRoom; // 방을 변경
-
-			printLocationInfo();
+			printLocationInfo(player.getCurrentRoom());
 		}
 	}
 	
 	private void look() {
-		printLocationInfo();
+		printLocationInfo(player.getCurrentRoom());
 	}
 	
 	private void eat() {
 		System.out.println("Delicious!");
+	}
+	
+	private void back(Command command) {
+		if (command.hasSecondWord()) {
+			System.out.println("back 명령어는 두 번째 단어를 가질 수 없습니다.");
+			return;
+		}
+		
+		player.back();
+		printLocationInfo(player.getCurrentRoom());
 	}
 
 	/*
@@ -174,6 +187,23 @@ public class Game {
 			return false;
 		} else {
 			return true; // signal that we want to quit
+		}
+	}
+	
+	private void take(Command command) {
+		if(!command.hasSecondWord()) {
+			System.out.println("Which item?");
+			return;
+		}
+		
+		String itemName = command.getSecondWord();
+		Item item = player.takeItem(itemName);
+		
+		if (item == null) {
+			System.out.println("Cannot take item");
+		} else {
+			//List<Item> items = player.getItems();
+			
 		}
 	}
 
