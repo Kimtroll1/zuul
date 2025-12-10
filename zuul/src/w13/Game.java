@@ -68,7 +68,7 @@ public class Game {
 	 * 출구가 있는 방향을 모두 출력한다.
 	 */
 	private void printLocationInfo() {
-		System.out.print(currentRoom.getExitString());
+		System.out.print("Location: " + currentRoom.getLongDescription() + "\n");
 	}
 
 	/**
@@ -81,12 +81,7 @@ public class Game {
 		System.out.println("Type 'help' if you need help.");
 		System.out.println();
 
-		
-		// 현재 있는 방에 대한 정보 출력
-		System.out.println("Location: " + currentRoom.getDescription());
-		// 출구가 있는 방향을 모두 출력
 		printLocationInfo();
-		System.out.println();
 	}
 
 	/**
@@ -114,6 +109,10 @@ public class Game {
 			goRoom(command);
 		} else if (commandWord.equals("quit")) {
 			wantToQuit = quit(command);
+		} else if (commandWord.equals("look")) {
+			look();
+		} else if (commandWord.equals("eat")) {
+			eat();
 		}
 
 		return wantToQuit;
@@ -126,8 +125,7 @@ public class Game {
 	 * and a list of the command words.
 	 */
 	private void printHelp() {
-		System.out.print("Commands: ");
-		System.out.println("go quit help");
+		System.out.println("Commands: " + parser.getCommandList());
 	}
 
 	/*
@@ -151,12 +149,16 @@ public class Game {
 		} else {
 			currentRoom = nextRoom; // 방을 변경
 
-			// 새 방에 대한 정보 출력
-			System.out.println("Location: " + currentRoom.getDescription());
-			// 출구가 있는 방향을 모두 출력
 			printLocationInfo();
-			System.out.println();
 		}
+	}
+	
+	private void look() {
+		printLocationInfo();
+	}
+	
+	private void eat() {
+		System.out.println("Delicious!");
 	}
 
 	/*

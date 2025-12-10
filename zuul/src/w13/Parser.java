@@ -13,6 +13,10 @@ public class Parser {
 		commands = new CommandWords();
 		reader = new Scanner(System.in);
 	}
+	
+	public String getCommandList() {
+		return commands.getCommandList();
+	}
 
 	/**
 	 * @return The next command from the user.

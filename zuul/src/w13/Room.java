@@ -61,5 +61,13 @@ public class Room {
 	public String getDescription() {
 		return description;
 	}
+	
+	/**
+	 * 방의 설명과 출구들을 알려주는 문자열을 반환한다.
+	 * @return
+	 */
+	public String getLongDescription() {
+		return description + ".\n" + getExitString();
+	}
 
 }
