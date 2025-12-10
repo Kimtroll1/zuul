@@ -4,17 +4,22 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.Stack;
 public class Player {
 	private Room currentRoom;
-	private Room recentRoom;
 	private int maxWeight;
+	private Stack<Room> pastRooms;
 	private ArrayList<Item> items = new ArrayList<>();
 
 	
 	public Player(Room startRoom, int maxWeight) {
 		currentRoom = startRoom;
-		recentRoom = startRoom;
+		pastRooms = new Stack<Room>();
 		this.maxWeight = maxWeight;
+	}
+	
+	public int getMaxWeight() {
+		return maxWeight;
 	}
 	
 	/**
@@ -29,7 +34,7 @@ public class Player {
 		if (nextRoom == null) {
 			return -1;
 		} else {
-			recentRoom = currentRoom;
+			pastRooms.push(currentRoom);
 			currentRoom = nextRoom; // 방을 변경
 			return 0;
 		}
@@ -47,8 +52,8 @@ public class Player {
 	 * 이전 방으로 돌아간다.
 	 */
 	public void back() {
-		if (recentRoom != null && currentRoom != recentRoom) {
-			currentRoom = recentRoom;
+		if (!pastRooms.isEmpty()) {
+			currentRoom = pastRooms.pop();
 		}
 	}
 	

@@ -120,6 +120,12 @@ public class Game {
 			eat();
 		} else if (commandWord.equals("back")) {
 			back(command);
+		} else if (commandWord.equals("take")) {
+			take(command);
+		} else if (commandWord.equals("drop")) {
+			drop(command);
+		} else if (commandWord.equals("items")) {
+			items();
 		}
 
 		return wantToQuit;
@@ -190,6 +196,19 @@ public class Game {
 		}
 	}
 	
+	private void printItems(List<Item> items) {
+		int sum = 0;
+		System.out.println("<Carrying Items>");
+		
+		for (Item item : items) {
+			System.out.println(item.getLongDescription());
+			sum += item.getWeight();
+		}
+		
+		System.out.println("<Total weight: " + sum + ", max weight: " + player.getMaxWeight()
+		 + ">");
+	}
+	
 	private void take(Command command) {
 		if(!command.hasSecondWord()) {
 			System.out.println("Which item?");
@@ -200,11 +219,33 @@ public class Game {
 		Item item = player.takeItem(itemName);
 		
 		if (item == null) {
-			System.out.println("Cannot take item");
+			System.out.println("Cannot take item.");
 		} else {
-			//List<Item> items = player.getItems();
-			
+			List<Item> items = player.getItems();
+			printItems(items);
 		}
+	}
+	
+	private void drop(Command command) {
+		if(!command.hasSecondWord()) {
+			System.out.println("Which item?");
+			return;
+		}
+		
+		String itemName = command.getSecondWord();
+		
+		Item item = player.dropItem(itemName);
+		
+		if (item == null) {
+			System.out.println("Cannot drop item.");
+		} else {
+			List<Item> items = player.getItems();
+			printItems(items);
+		}
+	}
+	
+	private void items() {
+		printItems(player.getItems());
 	}
 
 	public static void main(String[] args) {
